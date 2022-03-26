@@ -1,0 +1,13 @@
+{
+	"name": "TestRestServier",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://acnn.azurewebsites.net/api/OutputTrigger?code=q4xMDtMkSEuJWQe/9rmDancm7VQ/B6NX8UNAitEkaPH1QhRmfaiOow==",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
