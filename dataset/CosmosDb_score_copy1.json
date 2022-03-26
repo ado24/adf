@@ -1,0 +1,55 @@
+{
+	"name": "CosmosDb_score_copy1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "acNN_DB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "CosmosDbSqlApiCollection",
+		"schema": {
+			"type": "object",
+			"properties": {
+				"currentScore": {
+					"type": "number"
+				},
+				"d3Value": {
+					"type": "array",
+					"items": {
+						"type": "integer"
+					}
+				},
+				"dateCreated": {
+					"type": "string"
+				},
+				"ionValue": {
+					"type": "array",
+					"items": {
+						"type": "integer"
+					}
+				},
+				"zincValue": {
+					"type": "array",
+					"items": {
+						"type": "integer"
+					}
+				},
+				"users": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "integer"
+						},
+						"area": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		},
+		"typeProperties": {
+			"collectionName": "immuneScore"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
