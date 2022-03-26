@@ -1,0 +1,146 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "acNN-DF"
+		},
+		"AcJava_functionKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'functionKey' of 'AcJava'"
+		},
+		"AcNN_functionKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'functionKey' of 'AcNN'"
+		},
+		"AzureBlobStorage_Target_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage_Target'"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
+		"AzureTables_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureTables'"
+		},
+		"StorageTable_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'StorageTable'"
+		},
+		"acNN_DB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'acNN_DB'"
+		},
+		"AcJava_properties_typeProperties_functionAppUrl": {
+			"type": "string",
+			"defaultValue": "https://acnn-java.azurewebsites.net"
+		},
+		"AcNN_properties_typeProperties_functionAppUrl": {
+			"type": "string",
+			"defaultValue": "https://acnn.azurewebsites.net"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://acnndatalake.dfs.core.windows.net"
+		},
+		"TestRestServier_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://acnn.azurewebsites.net/api/OutputTrigger?code=q4xMDtMkSEuJWQe/9rmDancm7VQ/B6NX8UNAitEkaPH1QhRmfaiOow=="
+		},
+		"AzureKeyVault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://ac-kv.vault.azure.net/"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "acNN-DF_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AcJava_functionKey": {
+						"value": "[parameters('AcJava_functionKey')]"
+					},
+					"AcNN_functionKey": {
+						"value": "[parameters('AcNN_functionKey')]"
+					},
+					"AzureBlobStorage_Target_connectionString": {
+						"value": "[parameters('AzureBlobStorage_Target_connectionString')]"
+					},
+					"AzureDataLakeStorage1_accountKey": {
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					},
+					"AzureTables_connectionString": {
+						"value": "[parameters('AzureTables_connectionString')]"
+					},
+					"StorageTable_connectionString": {
+						"value": "[parameters('StorageTable_connectionString')]"
+					},
+					"acNN_DB_connectionString": {
+						"value": "[parameters('acNN_DB_connectionString')]"
+					},
+					"AcJava_properties_typeProperties_functionAppUrl": {
+						"value": "[parameters('AcJava_properties_typeProperties_functionAppUrl')]"
+					},
+					"AcNN_properties_typeProperties_functionAppUrl": {
+						"value": "[parameters('AcNN_properties_typeProperties_functionAppUrl')]"
+					},
+					"AzureDataLakeStorage1_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
+					},
+					"TestRestServier_properties_typeProperties_url": {
+						"value": "[parameters('TestRestServier_properties_typeProperties_url')]"
+					},
+					"AzureKeyVault_properties_typeProperties_baseUrl": {
+						"value": "[parameters('AzureKeyVault_properties_typeProperties_baseUrl')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "acNN-DF_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'acNN-DF_ArmTemplate_0')]"
+			]
+		}
+	]
+}

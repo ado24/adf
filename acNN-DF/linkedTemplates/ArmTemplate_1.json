@@ -1,0 +1,785 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "acNN-DF"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/WeightsTableBackup')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "StorageTable",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureTable",
+				"schema": [],
+				"typeProperties": {
+					"tableName": "weights"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyPipeline_xcf')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach_xcf",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.cw_items",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy_xcf",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "@{item().source.collectionName}"
+										},
+										{
+											"name": "Destination",
+											"value": "azureml-blobstore-78022573-7d6a-48c8-aee6-4ec2b50b3919//@{item().destination.fileName}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "CosmosDbSqlApiSource",
+											"preferredRegions": []
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings",
+												"maxConcurrentConnections": 4,
+												"blockSizeInMB": 6
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"parallelCopies": 2,
+										"enableSkipIncompatibleRow": true,
+										"validateDataConsistency": true,
+										"logSettings": {
+											"enableCopyActivityLog": true,
+											"copyActivityLogSettings": {
+												"logLevel": "Info",
+												"enableReliableLogging": false
+											},
+											"logLocationSettings": {
+												"linkedServiceName": {
+													"referenceName": "AzureBlobStorage_Target",
+													"type": "LinkedServiceReference"
+												},
+												"path": "azureml-blobstore-78022573-7d6a-48c8-aee6-4ec2b50b3919"
+											}
+										},
+										"dataIntegrationUnits": 2,
+										"translator": {
+											"value": "@item().copyActivity.translator",
+											"type": "Expression"
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SourceDataset_xcf",
+											"type": "DatasetReference",
+											"parameters": {
+												"cw_collectionName": "@item().source.collectionName"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DestinationDataset_xcf",
+											"type": "DatasetReference",
+											"parameters": {
+												"cw_fileName": "@item().destination.fileName"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"cw_items": {
+						"type": "Array",
+						"defaultValue": [
+							{
+								"source": {
+									"collectionName": "immuneScore"
+								},
+								"destination": {
+									"fileName": "immuneScore.txt"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['currentScore']"
+												},
+												"sink": {
+													"type": "Double",
+													"ordinal": 1
+												}
+											},
+											{
+												"source": {
+													"path": "$['d3Value']"
+												},
+												"sink": {
+													"type": "String",
+													"ordinal": 2
+												}
+											},
+											{
+												"source": {
+													"path": "$['dateCreated']"
+												},
+												"sink": {
+													"type": "DateTime",
+													"ordinal": 3
+												}
+											},
+											{
+												"source": {
+													"path": "$['id']"
+												},
+												"sink": {
+													"type": "Int32",
+													"ordinal": 4
+												}
+											},
+											{
+												"source": {
+													"path": "$['ionValue']"
+												},
+												"sink": {
+													"type": "String",
+													"ordinal": 5
+												}
+											},
+											{
+												"source": {
+													"path": "$['zincValue']"
+												},
+												"sink": {
+													"type": "String",
+													"ordinal": 6
+												}
+											},
+											{
+												"source": {
+													"path": "$['users']['id']"
+												},
+												"sink": {
+													"type": "Int32",
+													"ordinal": 7
+												}
+											},
+											{
+												"source": {
+													"path": "$['users']['area']"
+												},
+												"sink": {
+													"type": "String",
+													"ordinal": 8
+												}
+											},
+											{
+												"source": {
+													"path": "$['_rid']"
+												},
+												"sink": {
+													"type": "String",
+													"ordinal": 9
+												}
+											}
+										],
+										"mapComplexValuesToString": true
+									}
+								}
+							},
+							{
+								"source": {
+									"collectionName": "ImmuneScoreHistory"
+								},
+								"destination": {
+									"fileName": "ImmuneScoreHistory.txt"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"path": "$['record']['currentScore']"
+												},
+												"sink": {
+													"type": "Double",
+													"ordinal": 1
+												}
+											},
+											{
+												"source": {
+													"path": "$['record']['id']"
+												},
+												"sink": {
+													"type": "Guid",
+													"ordinal": 2
+												}
+											},
+											{
+												"source": {
+													"path": "$['record']['users']['id']"
+												},
+												"sink": {
+													"type": "Int32",
+													"ordinal": 3
+												}
+											},
+											{
+												"source": {
+													"path": "$['record']['users']['area']"
+												},
+												"sink": {
+													"type": "String",
+													"ordinal": 4
+												}
+											},
+											{
+												"source": {
+													"path": "$['record']['dateCreated']"
+												},
+												"sink": {
+													"type": "DateTime",
+													"ordinal": 5
+												}
+											},
+											{
+												"source": {
+													"path": "$['record']['_rid']"
+												},
+												"sink": {
+													"type": "String",
+													"ordinal": 6
+												}
+											},
+											{
+												"source": {
+													"path": "$['record']['_ts']"
+												},
+												"sink": {
+													"type": "DateTime",
+													"ordinal": 7
+												}
+											},
+											{
+												"source": {
+													"path": "$['record']['d3Value']"
+												},
+												"sink": {
+													"type": "String",
+													"ordinal": 8
+												}
+											},
+											{
+												"source": {
+													"path": "$['record']['ionValue']"
+												},
+												"sink": {
+													"type": "String",
+													"ordinal": 9
+												}
+											},
+											{
+												"source": {
+													"path": "$['record']['zincValue']"
+												},
+												"sink": {
+													"type": "String",
+													"ordinal": 10
+												}
+											},
+											{
+												"source": {
+													"path": "$['id']"
+												},
+												"sink": {
+													"type": "Guid",
+													"ordinal": 11
+												}
+											},
+											{
+												"source": {
+													"path": "$['_ts']"
+												},
+												"sink": {
+													"type": "DateTime",
+													"ordinal": 12
+												}
+											}
+										]
+									}
+								}
+							}
+						]
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-12-12T15:35:28Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/backupWeights')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "weights"
+							},
+							{
+								"name": "Destination",
+								"value": "weights"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbSqlApiSource",
+								"preferredRegions": []
+							},
+							"sink": {
+								"type": "AzureTableSink",
+								"azureTableInsertType": "merge",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"parallelCopies": 4,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['id']"
+										},
+										"sink": {
+											"name": "id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['name']"
+										},
+										"sink": {
+											"name": "name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['value']"
+										},
+										"sink": {
+											"name": "value",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"path": "$['_rid']"
+										},
+										"sink": {
+											"name": "_rid",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['_self']"
+										},
+										"sink": {
+											"name": "_self",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['_etag']"
+										},
+										"sink": {
+											"name": "_etag",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['RowKey']"
+										},
+										"sink": {
+											"name": "RowKey",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['PartitionKey']"
+										},
+										"sink": {
+											"name": "PartitionKey",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['_ts']"
+										},
+										"sink": {
+											"name": "_ts",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "CosmosDb_weights",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "WeightsTable",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Azure Function1",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": {
+								"value": "getScore?weight=@activity('Copy data1').columns('VitaminD3').value&value=4000",
+								"type": "Expression"
+							},
+							"method": "GET",
+							"headers": {},
+							"body": {
+								"value": "@activity('Copy data1').output",
+								"type": "Expression"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AcNN",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-12-12T15:51:05Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParseFW')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "FixedWidth",
+								"type": "DatasetReference"
+							},
+							"name": "FWIn"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "AzureBlobStorage_Target",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivedColumn1"
+						},
+						{
+							"name": "Select1"
+						}
+					],
+					"script": "source(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> FWIn\nFWIn derive(Col1 = lpad(substring(Column_1,12,2), 5, '0'),\n\t\tCol2 = substring(Column_1,19,1)) ~> DerivedColumn1\nDerivedColumn1 select(mapColumn(\n\t\tCol1,\n\t\tCol2\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'json',\n\tcontainer: 'test-container',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1) ~> sink1"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestFlow2')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Json1",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "Json1",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Json1",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"linkedService": {
+								"referenceName": "TestRestServier",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink2"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Join1"
+						},
+						{
+							"name": "Union1"
+						},
+						{
+							"name": "SurrogateKey1"
+						}
+					],
+					"script": "source(output(\n\t\tid as string,\n\t\tname as string,\n\t\tvalue as double,\n\t\t{_rid} as string,\n\t\t{_self} as string,\n\t\t{_etag} as string,\n\t\t{_attachments} as string,\n\t\tRowKey as string,\n\t\tPartitionKey as string,\n\t\t{_ts} as integer,\n\t\ttest as (a as integer, b as string)[]\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tignoreNoFilesFound: false,\n\tdocumentForm: 'arrayOfDocuments') ~> source1\nsource(output(\n\t\tid as string,\n\t\tname as string,\n\t\tvalue as double,\n\t\t{_rid} as string,\n\t\t{_self} as string,\n\t\t{_etag} as string,\n\t\t{_attachments} as string,\n\t\tRowKey as string,\n\t\tPartitionKey as string,\n\t\t{_ts} as integer,\n\t\ttest as (a as integer, b as string)[]\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tdocumentForm: 'arrayOfDocuments') ~> source2\nsource1, source2 join(source1@RowKey == source2@RowKey,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nSurrogateKey1, source2 union(byName: false)~> Union1\nsource1 keyGenerate(output(key1 as long),\n\tstartAt: 1L) ~> SurrogateKey1\nJoin1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tid as string,\n\t\tname as string,\n\t\tvalue as double,\n\t\t{_rid} as string,\n\t\t{_self} as string,\n\t\t{_etag} as string,\n\t\t{_attachments} as string,\n\t\tRowKey as string,\n\t\tPartitionKey as string,\n\t\t{_ts} as integer,\n\t\ttest as (a as integer, b as string)[]\n\t),\n\tfilePattern:'Test_sink1.json',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1\nSurrogateKey1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tinsertHttpMethod: 'POST',\n\trequestFormat: ['type' -> 'json'],\n\tformat: 'rest',\n\ttimeout: 30,\n\trequestInterval: 0,\n\tfilePattern:'Test_Sink2.json',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink2"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cacheWeights')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CosmosDb_weights",
+								"type": "DatasetReference"
+							},
+							"name": "weights"
+						}
+					],
+					"sinks": [
+						{
+							"name": "cache"
+						},
+						{
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivedColumn1"
+						}
+					],
+					"script": "source(output(\n\t\tname as string,\n\t\tvalue as double,\n\t\tRowKey as string,\n\t\tPartitionKey as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'document') ~> weights\nweights derive(name = lpad(columns('name'), 10, ' '),\n\t\tvalue = lpad(columns('value'), 8, '0')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tstore: 'cache',\n\tformat: 'inline',\n\toutput: false,\n\tsaveOrder: 1) ~> cache\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tstore: 'cache',\n\tformat: 'inline',\n\toutput: false,\n\tsaveOrder: 1) ~> sink1"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FixedWidthPipe')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ParseFW",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "ParseFW",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"FWIn": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-12-18T19:06:12Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/ParseFW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "TestFlow2",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"sink1": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-01-29T02:29:00Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/TestFlow2')]"
+			]
+		}
+	]
+}

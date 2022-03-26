@@ -1,0 +1,51 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "acNN-DF"
+		},
+		"AcJava_functionKey": {
+			"value": ""
+		},
+		"AcNN_functionKey": {
+			"value": ""
+		},
+		"AzureBlobStorage_Target_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureTables_connectionString": {
+			"value": ""
+		},
+		"StorageTable_connectionString": {
+			"value": ""
+		},
+		"acNN_DB_connectionString": {
+			"value": ""
+		},
+		"AcJava_properties_typeProperties_functionAppUrl": {
+			"value": "https://acnn-java.azurewebsites.net"
+		},
+		"AcNN_properties_typeProperties_functionAppUrl": {
+			"value": "https://acnn.azurewebsites.net"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://acnndatalake.dfs.core.windows.net"
+		},
+		"TestRestServier_properties_typeProperties_url": {
+			"value": "https://acnn.azurewebsites.net/api/OutputTrigger?code=q4xMDtMkSEuJWQe/9rmDancm7VQ/B6NX8UNAitEkaPH1QhRmfaiOow=="
+		},
+		"AzureKeyVault_properties_typeProperties_baseUrl": {
+			"value": "https://ac-kv.vault.azure.net/"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
