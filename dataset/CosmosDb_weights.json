@@ -1,0 +1,32 @@
+{
+	"name": "CosmosDb_weights",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "acNN_DB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "CosmosDbSqlApiCollection",
+		"schema": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"value": {
+					"type": "number"
+				},
+				"RowKey": {
+					"type": "string"
+				},
+				"PartitionKey": {
+					"type": "string"
+				}
+			}
+		},
+		"typeProperties": {
+			"collectionName": "weights"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

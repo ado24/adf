@@ -1,0 +1,16 @@
+{
+	"name": "StageTest",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "StorageTable",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "stageTest"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

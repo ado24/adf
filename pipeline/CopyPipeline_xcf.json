@@ -1,0 +1,333 @@
+{
+	"name": "CopyPipeline_xcf",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach_xcf",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.cw_items",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy_xcf",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "@{item().source.collectionName}"
+								},
+								{
+									"name": "Destination",
+									"value": "azureml-blobstore-78022573-7d6a-48c8-aee6-4ec2b50b3919//@{item().destination.fileName}"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "CosmosDbSqlApiSource",
+									"preferredRegions": []
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings",
+										"maxConcurrentConnections": 4,
+										"blockSizeInMB": 6
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"parallelCopies": 2,
+								"enableSkipIncompatibleRow": true,
+								"validateDataConsistency": true,
+								"logSettings": {
+									"enableCopyActivityLog": true,
+									"copyActivityLogSettings": {
+										"logLevel": "Info",
+										"enableReliableLogging": false
+									},
+									"logLocationSettings": {
+										"linkedServiceName": {
+											"referenceName": "AzureBlobStorage_Target",
+											"type": "LinkedServiceReference"
+										},
+										"path": "azureml-blobstore-78022573-7d6a-48c8-aee6-4ec2b50b3919"
+									}
+								},
+								"dataIntegrationUnits": 2,
+								"translator": {
+									"value": "@item().copyActivity.translator",
+									"type": "Expression"
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "SourceDataset_xcf",
+									"type": "DatasetReference",
+									"parameters": {
+										"cw_collectionName": "@item().source.collectionName"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DestinationDataset_xcf",
+									"type": "DatasetReference",
+									"parameters": {
+										"cw_fileName": "@item().destination.fileName"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"cw_items": {
+				"type": "Array",
+				"defaultValue": [
+					{
+						"source": {
+							"collectionName": "immuneScore"
+						},
+						"destination": {
+							"fileName": "immuneScore.txt"
+						},
+						"copyActivity": {
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['currentScore']"
+										},
+										"sink": {
+											"type": "Double",
+											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"path": "$['d3Value']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
+											"path": "$['dateCreated']"
+										},
+										"sink": {
+											"type": "DateTime",
+											"ordinal": 3
+										}
+									},
+									{
+										"source": {
+											"path": "$['id']"
+										},
+										"sink": {
+											"type": "Int32",
+											"ordinal": 4
+										}
+									},
+									{
+										"source": {
+											"path": "$['ionValue']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 5
+										}
+									},
+									{
+										"source": {
+											"path": "$['zincValue']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 6
+										}
+									},
+									{
+										"source": {
+											"path": "$['users']['id']"
+										},
+										"sink": {
+											"type": "Int32",
+											"ordinal": 7
+										}
+									},
+									{
+										"source": {
+											"path": "$['users']['area']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 8
+										}
+									},
+									{
+										"source": {
+											"path": "$['_rid']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 9
+										}
+									}
+								],
+								"mapComplexValuesToString": true
+							}
+						}
+					},
+					{
+						"source": {
+							"collectionName": "ImmuneScoreHistory"
+						},
+						"destination": {
+							"fileName": "ImmuneScoreHistory.txt"
+						},
+						"copyActivity": {
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['record']['currentScore']"
+										},
+										"sink": {
+											"type": "Double",
+											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"path": "$['record']['id']"
+										},
+										"sink": {
+											"type": "Guid",
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
+											"path": "$['record']['users']['id']"
+										},
+										"sink": {
+											"type": "Int32",
+											"ordinal": 3
+										}
+									},
+									{
+										"source": {
+											"path": "$['record']['users']['area']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 4
+										}
+									},
+									{
+										"source": {
+											"path": "$['record']['dateCreated']"
+										},
+										"sink": {
+											"type": "DateTime",
+											"ordinal": 5
+										}
+									},
+									{
+										"source": {
+											"path": "$['record']['_rid']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 6
+										}
+									},
+									{
+										"source": {
+											"path": "$['record']['_ts']"
+										},
+										"sink": {
+											"type": "DateTime",
+											"ordinal": 7
+										}
+									},
+									{
+										"source": {
+											"path": "$['record']['d3Value']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 8
+										}
+									},
+									{
+										"source": {
+											"path": "$['record']['ionValue']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 9
+										}
+									},
+									{
+										"source": {
+											"path": "$['record']['zincValue']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 10
+										}
+									},
+									{
+										"source": {
+											"path": "$['id']"
+										},
+										"sink": {
+											"type": "Guid",
+											"ordinal": 11
+										}
+									},
+									{
+										"source": {
+											"path": "$['_ts']"
+										},
+										"sink": {
+											"type": "DateTime",
+											"ordinal": 12
+										}
+									}
+								]
+							}
+						}
+					}
+				]
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-12-12T15:35:28Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

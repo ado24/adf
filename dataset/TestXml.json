@@ -1,0 +1,18 @@
+{
+	"name": "TestXml",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage_Target",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Xml",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "test-container"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

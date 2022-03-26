@@ -1,0 +1,16 @@
+{
+	"name": "WeightsTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureTables",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "weights"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

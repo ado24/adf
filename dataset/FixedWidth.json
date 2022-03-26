@@ -1,0 +1,27 @@
+{
+	"name": "FixedWidth",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage_Target",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "test1.txt",
+				"container": "test-container"
+			},
+			"columnDelimiter": "",
+			"escapeChar": "\\",
+			"quoteChar": ""
+		},
+		"schema": [
+			{
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,24 @@
+{
+	"name": "SourceDataset_xcf",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "acNN_DB",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"cw_collectionName": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "CosmosDbSqlApiCollection",
+		"schema": {},
+		"typeProperties": {
+			"collectionName": {
+				"value": "@dataset().cw_collectionName",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

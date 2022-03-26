@@ -1,0 +1,34 @@
+{
+	"name": "cacheWeights",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CosmosDb_weights",
+						"type": "DatasetReference"
+					},
+					"name": "weights"
+				}
+			],
+			"sinks": [
+				{
+					"name": "cache"
+				},
+				{
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Parse2"
+				},
+				{
+					"name": "DerivedColumn1"
+				}
+			],
+			"script": "source(output(\n\t\tname as string,\n\t\tvalue as double,\n\t\tRowKey as string,\n\t\tPartitionKey as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'document') ~> weights\nDerivedColumn1 parse(name = ERROR_FUNCTION(''),\n\t\tvalue = ERROR_FUNCTION(''),\n\tformat: 'json',\n\tdocumentForm: 'documentPerLine') ~> Parse2\nweights derive(name = lpad(columns('name'), 10, ' '),\n\t\tvalue = lpad(columns('value'), 8, '0')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tstore: 'cache',\n\tformat: 'inline',\n\toutput: false,\n\tsaveOrder: 1) ~> cache\nParse2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tstore: 'cache',\n\tformat: 'inline',\n\toutput: false,\n\tsaveOrder: 1) ~> sink1"
+		}
+	}
+}

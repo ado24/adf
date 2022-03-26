@@ -1,0 +1,9 @@
+{
+	"name": "acNN-DF",
+	"location": "canadacentral",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "6a63ff60-4942-4a8d-880e-d627c2d25522",
+		"tenantId": "487b4d50-1251-4dde-a9f1-d928cc3e30e7"
+	}
+}
