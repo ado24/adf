@@ -147,7 +147,7 @@
 				"typeProperties": {
 					"variableName": "scoreObj",
 					"value": {
-						"value": "@activity('Lookup1').output",
+						"value": "@activity('Lookup1').output.currentScore",
 						"type": "Expression"
 					}
 				}
