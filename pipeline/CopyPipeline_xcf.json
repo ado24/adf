@@ -129,7 +129,7 @@
 						"referenceName": "CosmosDb_score_copy1",
 						"type": "DatasetReference"
 					},
-					"firstRowOnly": true
+					"firstRowOnly": false
 				}
 			},
 			{
@@ -145,7 +145,7 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "scoreObj",
+					"variableName": "Scores",
 					"value": {
 						"value": "@activity('Lookup1').output.currentScore",
 						"type": "Expression"
