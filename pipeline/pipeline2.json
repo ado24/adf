@@ -5,7 +5,14 @@
 			{
 				"name": "Set variable1",
 				"type": "SetVariable",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable1_copy1_copy1_copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "textField",
@@ -43,7 +50,7 @@
 				"typeProperties": {
 					"variableName": "values",
 					"value": {
-						"value": "@split('-3321321231561045212|521321231561045212                                                 ', '|')",
+						"value": "@split(trim('-3321321231561045212|521321231561045212                                                 '), '|')",
 						"type": "Expression"
 					}
 				}
