@@ -18,12 +18,72 @@
 			{
 				"name": "Set variable1_copy1",
 				"type": "SetVariable",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable1_copy1_copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "textField",
 					"value": {
 						"value": "@trim(substring('-3321321231561045212|521321231561045212                                                 ',\n  indexof('-3321321231561045212|521321231561045212                                                 ',\n  '|'),\n1))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set array",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "values",
+					"value": {
+						"value": "@split('-3321321231561045212|521321231561045212                                                 ', '|')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable1_copy1_copy1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set array",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "textField",
+					"value": {
+						"value": "@variables('values')[1]",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable1_copy1_copy1_copy1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set array",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "textField",
+					"value": {
+						"value": "@variables('values')[0]",
 						"type": "Expression"
 					}
 				}
@@ -35,6 +95,9 @@
 			},
 			"pos": {
 				"type": "String"
+			},
+			"values": {
+				"type": "Array"
 			}
 		},
 		"annotations": []
