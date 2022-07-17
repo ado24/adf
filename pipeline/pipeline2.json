@@ -10,7 +10,20 @@
 				"typeProperties": {
 					"variableName": "textField",
 					"value": {
-						"value": "@trim(substring('521321231561045212|521321231561045212                                                 ',\n  indexof('-3321321231561045212|521321231561045212                                                 ',\n  '|'),\n21))",
+						"value": "@trim(substring('-3321321231561045212|521321231561045212                                                 ',\n  indexof('-3321321231561045212|521321231561045212                                                 ',\n  '|'),\n21))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable1_copy1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "textField",
+					"value": {
+						"value": "@trim(substring('-3321321231561045212|521321231561045212                                                 ',\n  indexof('-3321321231561045212|521321231561045212                                                 ',\n  '|'),\n1))",
 						"type": "Expression"
 					}
 				}
