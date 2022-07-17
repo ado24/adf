@@ -1,0 +1,26 @@
+{
+	"name": "pipeline2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "textField",
+					"value": {
+						"value": "@substring('521321231561045212|521321231561045212                                                 ',\n  indexof('521321231561045212|521321231561045212                                                 ','\n  |'),\n20)",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"textField": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
