@@ -5,7 +5,14 @@
 			{
 				"name": "ForEach_xcf",
 				"type": "ForEach",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
@@ -96,6 +103,53 @@
 							]
 						}
 					]
+				}
+			},
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "CosmosDbSqlApiSource",
+						"query": "SELECT c.currentScore FROM c",
+						"preferredRegions": [],
+						"pageSize": -1,
+						"detectDatetime": true
+					},
+					"dataset": {
+						"referenceName": "CosmosDb_score_copy1",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Scores",
+					"value": {
+						"value": "@activity('Lookup1').output.value",
+						"type": "Expression"
+					}
 				}
 			}
 		],
@@ -324,6 +378,14 @@
 						}
 					}
 				]
+			}
+		},
+		"variables": {
+			"Scores": {
+				"type": "Array"
+			},
+			"scoreObj": {
+				"type": "String"
 			}
 		},
 		"annotations": [],
