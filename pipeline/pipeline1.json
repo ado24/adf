@@ -3,8 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DataFlow1",
-				"description": "Test change",
+				"name": "Data flow1",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
