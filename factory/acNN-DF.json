@@ -1,5 +1,10 @@
 {
 	"name": "acNN-DF",
+	"properties": {
+		"globalConfigurations": {
+			"PipelineBillingEnabled": "true"
+		}
+	},
 	"location": "canadacentral",
 	"identity": {
 		"type": "SystemAssigned",
